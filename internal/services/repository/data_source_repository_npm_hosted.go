@@ -13,9 +13,10 @@ func DataSourceRepositoryNpmHosted() *schema.Resource {
 		Read: dataSourceRepositoryNpmHostedRead,
 		Schema: map[string]*schema.Schema{
 			// Common schemas
-			"id":     common.DataSourceID,
-			"name":   repository.DataSourceName,
-			"online": repository.DataSourceOnline,
+			"id":               common.DataSourceID,
+			"name":             repository.DataSourceName,
+			"online":           repository.DataSourceOnline,
+			"ignore_not_found": repository.IgnoreIfNotFound,
 			// Hosted schemas
 			"cleanup":   repository.DataSourceCleanup,
 			"component": repository.DataSourceComponent,

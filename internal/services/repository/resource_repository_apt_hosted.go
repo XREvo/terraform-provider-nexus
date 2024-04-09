@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"strings"
+
 	nexus "github.com/datadrivers/go-nexus-client/nexus3"
 	"github.com/datadrivers/go-nexus-client/nexus3/schema/repository"
 	"github.com/datadrivers/terraform-provider-nexus/internal/schema/common"
@@ -125,6 +127,7 @@ func setAptHostedRepositoryToResourceData(repo *repository.AptHostedRepository, 
 	resourceData.Set("name", repo.Name)
 	resourceData.Set("online", repo.Online)
 	resourceData.Set("distribution", repo.Apt.Distribution)
+	resourceData.Set("exists", true)
 
 	//If no passphrase is set, the API wont return the AptSigning block, so the keypair is read from previous state.
 	oldKeyPair := resourceData.Get("signing.0.keypair").(string)
@@ -176,10 +179,16 @@ func resourceAptHostedRepositoryCreate(resourceData *schema.ResourceData, m inte
 
 func resourceAptHostedRepositoryRead(resourceData *schema.ResourceData, m interface{}) error {
 	client := m.(*nexus.NexusClient)
+	ignore_not_found, ok := resourceData.Get("ignore_not_found").(bool)
+	if !ok {
+		ignore_not_found = false
+	}
 
 	repo, err := client.Repository.Apt.Hosted.Get(resourceData.Id())
 	if err != nil {
-		return err
+		if !(ignore_not_found && strings.Contains(err.Error(), "HTTP: 404")) {
+			return err
+		}
 	}
 
 	if repo == nil {

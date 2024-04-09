@@ -10,5 +10,11 @@ var (
 		Required:    true,
 		Type:        schema.TypeString,
 	}
-	DataSourceName = ResourceName
+	DataSourceName   = ResourceName
+	IgnoreIfNotFound = &schema.Schema{
+		Description: "Return a null object if not found on Nexus",
+		Optional:    true,
+		Type:        schema.TypeBool,
+		Default:     false,
+	}
 )

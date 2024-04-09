@@ -13,9 +13,10 @@ func DataSourceRepositoryGoGroup() *schema.Resource {
 		Read: dataSourceRepositoryGoGroupRead,
 		Schema: map[string]*schema.Schema{
 			// Common schemas
-			"id":     common.DataSourceID,
-			"name":   repository.DataSourceName,
-			"online": repository.DataSourceOnline,
+			"id":               common.DataSourceID,
+			"name":             repository.DataSourceName,
+			"online":           repository.DataSourceOnline,
+			"ignore_not_found": repository.IgnoreIfNotFound,
 			// Group schemas
 			"group":   repository.DataSourceGroup,
 			"storage": repository.DataSourceStorage,

@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"strings"
+
 	nexus "github.com/datadrivers/go-nexus-client/nexus3"
 	"github.com/datadrivers/go-nexus-client/nexus3/schema/repository"
 	"github.com/datadrivers/terraform-provider-nexus/internal/schema/common"
@@ -177,10 +179,16 @@ func resourceMavenProxyRepositoryCreate(resourceData *schema.ResourceData, m int
 
 func resourceMavenProxyRepositoryRead(resourceData *schema.ResourceData, m interface{}) error {
 	client := m.(*nexus.NexusClient)
+	ignore_not_found, ok := resourceData.Get("ignore_not_found").(bool)
+	if !ok {
+		ignore_not_found = false
+	}
 
 	repo, err := client.Repository.Maven.Proxy.Get(resourceData.Id())
 	if err != nil {
-		return err
+		if !(ignore_not_found && strings.Contains(err.Error(), "HTTP: 404")) {
+			return err
+		}
 	}
 
 	if repo == nil {

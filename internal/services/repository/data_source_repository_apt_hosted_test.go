@@ -18,6 +18,13 @@ data "nexus_repository_apt_hosted" "acceptance" {
 	name   = nexus_repository_apt_hosted.acceptance.id
 }`
 }
+func testAccDataSourceRepositoryAptHostedNotFoundConfig() string {
+	return `
+data "nexus_repository_apt_hosted" "not_found" {
+	name             = "` + acctest.RandString(10) + `"
+	ignore_not_found = true
+}`
+}
 
 func TestAccDataSourceRepositoryAptHosted(t *testing.T) {
 
@@ -54,6 +61,23 @@ func TestAccDataSourceRepositoryAptHosted(t *testing.T) {
 						resource.TestCheckResourceAttr(dataSourceName, "storage.0.strict_content_type_validation", strconv.FormatBool(repo.Storage.StrictContentTypeValidation)),
 						resource.TestCheckResourceAttr(dataSourceName, "signing.0.keypair", repo.AptSigning.Keypair),
 					),
+				),
+			},
+		},
+	})
+}
+
+func TestAccDataSourceRepositoryAptHostedNotFound(t *testing.T) {
+	dataSourceName := "data.nexus_repository_apt_hosted.not_found"
+
+	resource.Test(t, resource.TestCase{
+		PreCheck:  func() { acceptance.AccPreCheck(t) },
+		Providers: acceptance.TestAccProviders,
+		Steps: []resource.TestStep{
+			{
+				Config: testAccDataSourceRepositoryAptHostedNotFoundConfig(),
+				Check: resource.ComposeTestCheckFunc(
+					resource.TestCheckResourceAttr(dataSourceName, "id", ""),
 				),
 			},
 		},

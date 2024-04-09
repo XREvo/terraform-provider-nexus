@@ -14,9 +14,10 @@ func DataSourceRepositoryP2Proxy() *schema.Resource {
 
 		Schema: map[string]*schema.Schema{
 			// Common schemas
-			"id":     common.DataSourceID,
-			"name":   repositorySchema.DataSourceName,
-			"online": repositorySchema.DataSourceOnline,
+			"id":               common.DataSourceID,
+			"name":             repositorySchema.DataSourceName,
+			"online":           repositorySchema.DataSourceOnline,
+			"ignore_not_found": repositorySchema.IgnoreIfNotFound,
 			// Proxy schemas
 			"cleanup":        repositorySchema.DataSourceCleanup,
 			"http_client":    repositorySchema.DataSourceHTTPClient,

@@ -223,10 +223,16 @@ func resourceDockerProxyRepositoryCreate(resourceData *schema.ResourceData, m in
 
 func resourceDockerProxyRepositoryRead(resourceData *schema.ResourceData, m interface{}) error {
 	client := m.(*nexus.NexusClient)
+	ignore_not_found, ok := resourceData.Get("ignore_not_found").(bool)
+	if !ok {
+		ignore_not_found = false
+	}
 
 	repo, err := client.Repository.Docker.Proxy.Get(resourceData.Id())
 	if err != nil {
-		return err
+		if !(ignore_not_found && strings.Contains(err.Error(), "HTTP: 404")) {
+			return err
+		}
 	}
 
 	if repo == nil {
